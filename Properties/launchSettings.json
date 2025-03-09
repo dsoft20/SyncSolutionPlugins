@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "SyncSolutionPluginAssembly": {
+      "commandName": "Project"
+    },
+    "Profile 1": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\dsoft\\.dotnet\\tools\\pacx.exe",
+      "commandLineArgs": "syncsolutionplugins -sn \"test\" --plugin \"C:\\Users\\dsoft\\Desktop\\PlauginAssemblySolutionSync\\bin\\Debug\\net8.0\\SyncSolutionPluginAssembly.dll\""
+    }
+  }
+}
