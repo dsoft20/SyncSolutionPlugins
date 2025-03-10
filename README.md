@@ -1,7 +1,8 @@
 
 # Sync solution plugins for PACX
-A plugin for PACX that syncs the plugin assemblies loaded on a solution to the local built version.
-The plugin can, if necessary, rebuild the entire project or the single project specific to a plugin.
+A plugin for PACX that syncs the plugin assemblies and plugin packages loaded on a solution to the local built version.
+The plugin can, if necessary, rebuild the entire project or the single project specific to a plugin assembly/package.
+
 
 # Installation
 Download the release or clone the repository and build it. 
