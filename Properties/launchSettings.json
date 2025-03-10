@@ -6,7 +6,7 @@
     "Profile 1": {
       "commandName": "Executable",
       "executablePath": "C:\\Users\\dsoft\\.dotnet\\tools\\pacx.exe",
-      "commandLineArgs": "syncsolutionplugins -sn \"test\" --plugin \"C:\\Users\\dsoft\\Desktop\\PlauginAssemblySolutionSync\\bin\\Debug\\net8.0\\SyncSolutionPluginAssembly.dll\""
+      "commandLineArgs": "dst sync -s \"test_sync\" --plugin \"C:\\Users\\dsoft\\Desktop\\SyncSolutionPlugins\\bin\\Debug\\net8.0\\SyncSolutionPlugins.dll\""
     }
   }
 }

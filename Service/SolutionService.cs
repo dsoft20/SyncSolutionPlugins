@@ -35,24 +35,24 @@ namespace SyncSolutionPlugins.Service
 
             var errorMessage = string.Empty;
 
-            if (string.IsNullOrWhiteSpace(command.SolutionName))
+            if (string.IsNullOrWhiteSpace(command.Solution))
             {
                 output.WriteLine($"Solution name parameter not given, use the current default solution.", ConsoleColor.Yellow);
-                command.SolutionName = await organizationServiceRepository.GetCurrentDefaultSolutionAsync() ?? string.Empty;
+                command.Solution = await organizationServiceRepository.GetCurrentDefaultSolutionAsync() ?? string.Empty;
             }
 
-            if (string.IsNullOrWhiteSpace(command.SolutionName))
+            if (string.IsNullOrWhiteSpace(command.Solution))
             {
                 solutionExistsRespone.ErrorMessage = "Cannot get current default solution, exiting...";
                 solutionExistsRespone.Exists = false;
                 return solutionExistsRespone;
             }
 
-            var solutionEntity = solutionRepository.GetSolutionByUniqueName(command.SolutionName);
+            var solutionEntity = solutionRepository.GetSolutionByUniqueName(command.Solution);
 
             if (solutionEntity is null)
             {
-                solutionExistsRespone.ErrorMessage = $"Cannot find a solution with name <{command.SolutionName}>";
+                solutionExistsRespone.ErrorMessage = $"Cannot find a solution with name <{command.Solution}>";
                 solutionExistsRespone.Exists = false;
                 return solutionExistsRespone;
             }
