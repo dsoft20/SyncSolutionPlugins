@@ -44,10 +44,6 @@ namespace SyncSolutionPlugins.Repository
             pluginAssemblyLink.EntityAlias = nameof(pluginassembly);
             pluginAssemblyLink.Columns.AddColumns(pluginassembly.name, pluginassembly.pluginassemblyid, pluginassembly.packageid);
 
-            //var pluginPackageLink = pluginAssemblyLink.AddLink(nameof(pluginpackage), pluginassembly.packageid, pluginpackage.pluginpackageid, JoinOperator.LeftOuter);
-            //pluginPackageLink.EntityAlias = nameof(pluginpackage);
-            //pluginPackageLink.Columns.AddColumns(pluginpackage.pluginpackageid, pluginpackage.uniquename);
-
             var results = organizationService.RetrieveMultiple(query).Entities.ToList();
             var plugins = new List<Plugin>();
 
@@ -85,35 +81,48 @@ namespace SyncSolutionPlugins.Repository
         {
             for (int i = 0; i < pluginAssemblies.Count; i++)
             {
-                if (pluginAssemblies[i].Type == Plugin.PluginType.PluginPackage)
+                switch (pluginAssemblies[i].Type)
                 {
-                    var pluginPackagePath = Path.Combine(this.command.Path, pluginAssemblies[i].Name, "bin", "Debug");
-                    var enumerateFiles = Directory.EnumerateFiles(pluginPackagePath, "*.nupkg").ToList();
+                    case Plugin.PluginType.Plugin:
+                        return CheckIfPluginAssemblyExists(pluginAssemblies[i]);
 
-                    if (enumerateFiles.Count == 0)
-                    {
-                        return false;
-                    }
-
-                    pluginPackagePath = Path.Combine(pluginPackagePath, $"{enumerateFiles[0]}");
-
-                    pluginAssemblies[i].ExistsOnFileSystem = true;
-                    pluginAssemblies[i].ModifiedOnFileSystem = File.GetLastWriteTime(pluginPackagePath);
-                    pluginAssemblies[i].Path = pluginPackagePath;
-
-                    continue;
+                    case Plugin.PluginType.PluginPackage:
+                        return CheckIfPluginPackageExists(pluginAssemblies[i]);
                 }
-
-                var pluginPath = Path.Combine(this.command.Path, pluginAssemblies[i].Name, "bin", "Debug", $"{pluginAssemblies[i].Name}.dll");
-                if (!File.Exists(pluginPath))
-                {
-                    return false;
-                }
-
-                pluginAssemblies[i].ExistsOnFileSystem = true;
-                pluginAssemblies[i].ModifiedOnFileSystem = File.GetLastWriteTime(pluginPath);
-                pluginAssemblies[i].Path = pluginPath;
             }
+
+            return true;
+        }
+
+        private bool CheckIfPluginPackageExists(Plugin pluginAssembly)
+        {
+            var pluginPackagePath = Path.Combine(this.command.Path, pluginAssembly.Name, "bin", "Debug");
+            var enumerateFiles = Directory.EnumerateFiles(pluginPackagePath, "*.nupkg").ToList();
+
+            if (enumerateFiles.Count == 0)
+            {
+                return false;
+            }
+
+            pluginPackagePath = Path.Combine(pluginPackagePath, $"{enumerateFiles[0]}");
+            pluginAssembly.ExistsOnFileSystem = true;
+            pluginAssembly.ModifiedOnFileSystem = File.GetLastWriteTime(pluginPackagePath);
+            pluginAssembly.Path = pluginPackagePath;
+            return true;
+        }
+
+        private bool CheckIfPluginAssemblyExists(Plugin plugin)
+        {
+            var pluginPath = Path.Combine(this.command.Path, plugin.Name, "bin", "Debug", $"{plugin.Name}.dll");
+
+            if (!File.Exists(pluginPath))
+            {
+                return false;
+            }
+
+            plugin.ExistsOnFileSystem = true;
+            plugin.ModifiedOnFileSystem = File.GetLastWriteTime(pluginPath);
+            plugin.Path = pluginPath;
 
             return true;
         }
