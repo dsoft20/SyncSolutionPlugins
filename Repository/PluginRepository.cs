@@ -79,22 +79,28 @@ namespace SyncSolutionPlugins.Repository
 
         private bool CheckIfPluginAssembliesExists(List<Plugin> pluginAssemblies)
         {
-            int count = 0;
+            bool allExists = true;
 
             for (int i = 0; i < pluginAssemblies.Count; i++)
             {
+                allExists = false;
                 switch (pluginAssemblies[i].Type)
                 {
                     case Plugin.PluginType.Plugin:
-                        count += CheckIfPluginAssemblyExists(pluginAssemblies[i]) ? 1 : 0;
+                        allExists = CheckIfPluginAssemblyExists(pluginAssemblies[i]);
                         break;
                     case Plugin.PluginType.PluginPackage:
-                        count += CheckIfPluginPackageExists(pluginAssemblies[i])?1:0;
+                        allExists = CheckIfPluginPackageExists(pluginAssemblies[i]);
                         break;
+                }
+
+                if (!allExists)
+                {
+                    return false;
                 }
             }
 
-            return pluginAssemblies.Count == count;
+            return true;
         }
 
         private bool CheckIfPluginPackageExists(Plugin pluginAssembly)
