@@ -1,8 +1,16 @@
 ﻿namespace SyncSolutionPlugins.Model
 {
-    internal class PluginAssembly
+    public class Plugin
     {
-        public Guid PluginAssemblyId { get; set; } = Guid.Empty;
+        public enum PluginType
+        {
+            Plugin,
+            PluginPackage
+        }
+
+        public Guid PluginId { get; set; } = Guid.Empty;
+        public Guid? PluginPackageId { get; set; } = Guid.Empty;
+        public PluginType Type { get; set; } = PluginType.Plugin;
         public string Name { get; set; } = string.Empty;
         public bool ExistsOnFileSystem { get; set; } = false;
         public DateTime ModifiedOnFileSystem { get; set; }

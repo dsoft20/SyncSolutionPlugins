@@ -33,7 +33,7 @@ namespace SyncSolutionPlugins.Service
             {
                 output.Write($"{Environment.NewLine}Trying to rebuild all projects...");
 
-                if (!LaunchProcess("dotnet", new List<string> { "msbuild", "/t:Rebuild" }))
+                if (!LaunchProcess("dotnet", new List<string> { "build", "--no-incremental" }))
                 {
                     throw new CommandException(104, $"Build failed!");
                 }
@@ -60,10 +60,10 @@ namespace SyncSolutionPlugins.Service
 
             try
             {
-                string path = Path.Combine(command.SourceFolder, pluginName);
-                output.Write($"{Environment.NewLine}Trying to rebuild plugin <{pluginName}> from n folder {path}...");
+                string path = Path.Combine(command.Path, pluginName);
+                output.Write($"{Environment.NewLine}Rebuild <{pluginName}> from folder {path}...");
 
-                if (!LaunchProcess("dotnet", new List<string> { "build", path }))
+                if (!LaunchProcess("dotnet", new List<string> { "build", path, "--no-incremental" }))
                 {
                     throw new CommandException(104, $"Build failed!");
                 }
@@ -83,6 +83,11 @@ namespace SyncSolutionPlugins.Service
         {
             try
             {
+                if (command.Preview)
+                {
+                    return true;
+                }
+
                 var processStartInfo = new ProcessStartInfo(executable, args);
                 processStartInfo.UseShellExecute = false;
                 processStartInfo.RedirectStandardOutput = true;
@@ -96,7 +101,7 @@ namespace SyncSolutionPlugins.Service
                     output.WriteLine($"{Environment.NewLine}{logOutput}");
                 }
 
-                if (process.ExitCode == 1) //Manage dot net msbuild exit code in case of errore
+                if (process.ExitCode == 1)
                 {
                     return false;
                 }

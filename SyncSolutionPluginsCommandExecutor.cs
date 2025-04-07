@@ -21,6 +21,11 @@ namespace SyncSolutionPlugins
 
         public async Task<CommandResult> ExecuteAsync(SyncSolutionPluginsCommand command, CancellationToken cancellationToken)
         {
+            if (command.Preview)
+            {
+                output.WriteLine("Preview mode enabled, no changes will be made", ConsoleColor.Yellow);
+            }
+
             var rebuildService = new RebuildService(command, output);
 
             if (!rebuildService.IsDotNetCliInstalled() && (command.Rebuild || command.RebuildAll))
@@ -31,8 +36,6 @@ namespace SyncSolutionPlugins
             this.output.Write($"Connecting to the current dataverse environment...");
             var crm = await this.organizationServiceRepository.GetCurrentConnectionAsync();
             this.output.WriteLine("Done", ConsoleColor.Green);
-
-           
 
             var solutionService = new SolutionService(command, crm, this.output, this.organizationServiceRepository);
             var solutionExistCheck = await solutionService.CheckIfSolutionExists();
@@ -55,11 +58,16 @@ namespace SyncSolutionPlugins
                 }
             }
 
-            var pluginAssemblyRepository = new PluginAssemblyRepository(crm, output, command);
+            var pluginAssemblyRepository = new PluginRepository(crm, output, command);
             var pluginAssemblies = pluginAssemblyRepository.GetPluginsFromSolution();
 
-            var pluginAssemblyService = new PluginAssemblyUploadService(output, crm, command);
+            var pluginAssemblyService = new PluginUploadService(output, crm, command);
             await pluginAssemblyService.UploadPlugins(pluginAssemblies);
+
+            if (command.Preview)
+            {
+                output.WriteLine("Preview mode end, no changes were made", ConsoleColor.Yellow);
+            }
 
             return CommandResult.Success();
         }
@@ -68,15 +76,15 @@ namespace SyncSolutionPlugins
         {
             errorMessage = string.Empty;
 
-            if (string.IsNullOrWhiteSpace(command.SourceFolder))
+            if (string.IsNullOrWhiteSpace(command.Path))
             {
                 this.output.WriteLine($"Source folder is empty, trying to use current directory {Directory.GetCurrentDirectory()}", ConsoleColor.Yellow);
-                command.SourceFolder = Directory.GetCurrentDirectory();
+                command.Path = Directory.GetCurrentDirectory();
             }
 
-            if (!Directory.Exists(command.SourceFolder))
+            if (!Directory.Exists(command.Path))
             {
-                errorMessage = $"The source folder <{command.SourceFolder}> does not exist";
+                errorMessage = $"The source folder <{command.Path}> does not exist";
                 return false;
             }
 
