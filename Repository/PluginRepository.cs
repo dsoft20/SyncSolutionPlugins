@@ -113,7 +113,7 @@ namespace SyncSolutionPlugins.Repository
                 return false;
             }
 
-            pluginPackagePath = Path.Combine(pluginPackagePath, $"{enumerateFiles[0]}");
+            pluginPackagePath = enumerateFiles[0];
             pluginAssembly.ExistsOnFileSystem = true;
             pluginAssembly.ModifiedOnFileSystem = File.GetLastWriteTime(pluginPackagePath);
             pluginAssembly.Path = pluginPackagePath;

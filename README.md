@@ -7,7 +7,7 @@ The plugin can, if necessary, rebuild the entire project or the single project s
 # Installation
 Download the release or clone the repository and build it. 
 A NuGet package will be available at a later date.
-### Bulit version (Downloaded from release or manually built)
+### Built version (Downloaded from release or manually built)
 The build dll must be placed in the following folder`C:\Users\<username>\AppData\Local\Greg.Xrm.Command\SyncSolutionPlugins`
 ### NuGet Package
 Not yet available
